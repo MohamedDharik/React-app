@@ -41,16 +41,16 @@ function Signup(){
   return(
     <>
     <Row>
-      <Col className='d-flex justify-content-center flex-row mt-5'>
+      <Col className='d-flex justify-content-center flex-row mt-3'>
       <input type="radio" className="btn-check" name="options-outlined" id="secondary-outlined" onClick={Toggle} ></input>
       <label className="btn btn-outline-secondary me-2" htmlFor="secondary-outlined" >Sign In</label>
       <input type="radio" className="btn-check" name="options-outlined" id="primary-outlined" onClick={Toggle} ></input>
       <label className="btn btn-outline-primary ms-2" htmlFor="primary-outlined">Sign Up</label>
     </Col>
     </Row>
-    <div className="mt-5 card shadow p-4 mb-5 bg-white rounded border rounded-4 d-flex justify-content-center ms-auto me-auto  w-75">
+    <div className="mt-3 card shadow p-4 mb-5 bg-white rounded border rounded-5 d-flex justify-content-center ms-auto me-auto  w-75">
       <Row >
-        <Col  className='col-6 d-flex flex-column justify-content-center ' style={signin ? disabledColumnStyle : {}}>
+        <Col  className='col-lg-6 col-md-6 col-sm-12 d-flex flex-column justify-content-center ' style={signin ? disabledColumnStyle : {}}>
         <h3 className='text-bold mt-5 d-flex justify-content-center text-primary'>Sign In</h3>
         <div className="d-flex justify-content-center mt-3 flex-row icon" disabled={signin}>
         <a href='#'><i className=' link-underline-light card p-2 fa-brands fa-google-plus-g me-3 border-info text-primary'></i></a>
@@ -69,7 +69,7 @@ function Signup(){
         </Form>
         </Col>
 
-        <Col  className='col-6 d-flex flex-column justify-content-center ' style={signup ? disabledColumnStyle : {}}>
+        <Col  className='col-lg-6 col-md-6 col-sm-12 d-flex flex-column justify-content-center ' style={signup ? disabledColumnStyle : {}}>
         <h3 className='text-bold mt-5 d-flex justify-content-center text-primary'>Create an Account</h3>
         <div className="d-flex justify-content-center mt-3 flex-row icon" disabled={signup}>
         <a href='#'><i className=' link-underline-light card p-2 fa-brands fa-google-plus-g me-3 border-info text-primary'></i></a>
