@@ -1,8 +1,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import {Navbar,Container,NavbarBrand,Row,Col,Nav,NavItem,NavLink,Button} from 'react-bootstrap';
-
+ import { useNavigate } from 'react-router-dom';
 
 function header(){
+     const navigate = useNavigate();
+
+    const NaviLogin=(e)=>{
+        e.preventDefault();
+        navigate('/login')
+    }
+
     return(
         <>
         <Navbar className="bg-primary navbar-dark  mt-0">
@@ -30,7 +37,7 @@ function header(){
                             </Col>
                         </Row>
                     </div>
-                    <Nav className='ml-lg-auto' navbar>
+                    <Nav className='' navbar>
                         <NavItem >
                             <NavLink className='text-light' href='#' onClick={(e)=>e.preventDefault()}>
                                 About us
@@ -48,8 +55,9 @@ function header(){
                             </NavLink>
                         </NavItem>
                         <NavItem>
+                          
                             <NavLink  href='#'onClick={(e)=>e.preventDefault()}>
-                                <Button type='button' className=' btn btn-outline-light  rounded-3 bg-light text-primary d-flex justify-content-center'>SignUp</Button>
+                                <Button type='button' onClick={NaviLogin} className=' btn btn-outline-light  rounded-3 bg-light text-primary d-flex justify-content-center'>Login</Button>
                             </NavLink>
                         </NavItem>
                     </Nav>
