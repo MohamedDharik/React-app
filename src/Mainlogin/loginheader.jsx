@@ -8,7 +8,7 @@ function header(){
 
     const NaviSignup=(e)=>{
         e.preventDefault();
-         navigate("/signUp")
+         navigate("/")
     }
     return(
         <>
