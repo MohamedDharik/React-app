@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 export default function Signup(){
     const navigate = useNavigate();
     const[userName, setUserName] =useState("");
+    const[phone_number, setPhone] =useState("");
     const[email, setEmail] =useState("");
     const[password, setPassword] =useState("");
     const[Error, setError] =useState("");
@@ -18,7 +19,7 @@ export default function Signup(){
       setError("");
   
      try {
-        await signUp(email, password)
+        signUp(email, password)
         setSuccess(true)
         navigate("/login")
      } 
@@ -53,6 +54,8 @@ export default function Signup(){
         <span className='d-flex justify-content-center text-secondary mt-3'>or use email for registration</span>
         <Form >
           <input type='text' placeholder='Enter Name' className='form-control mt-3 d-flex justify-content-center ms-auto me-auto border-info w-50' value={userName} onChange={(e)=>setUserName(e.target.value)}></input>
+
+          <input type='number' placeholder='Enter Phone Number' className='form-control mt-3 d-flex justify-content-center ms-auto me-auto border-info w-50' value={phone_number} onChange={(e)=>setPhone(e.target.value)}></input>
 
           <input type='Email' placeholder='Enter Email' className='form-control mt-3 d-flex justify-content-center ms-auto me-auto border-info w-50' value={email} onChange={(e)=>setEmail(e.target.value)}></input>
 

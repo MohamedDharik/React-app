@@ -52,9 +52,10 @@ import { useState,useEffect } from 'react';
                      
                      <h4 className='mt-2 mb-0'>Login Users</h4>
                      <hr/>
-                    <strong className='ms-3'>Email</strong> 
-
-                     <p>{user.email}</p>
+                    
+                     <p><strong>Name: </strong>{user.name}</p>
+                     <p><strong>Email: </strong>{user.email}</p>
+                     <p><strong>Phone: </strong>{user.phone_number}</p>
                      </Col>
                                   
                      
