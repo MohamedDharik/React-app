@@ -1,6 +1,6 @@
 
 import { CognitoUserPool,AuthenticationDetails,CognitoUser } from "amazon-cognito-identity-js";
-
+import { updateUserAttributes } from 'aws-amplify/auth';
 import  {poolData} from './Userpool.js';
 
 const Datapool= new CognitoUserPool({
@@ -66,6 +66,25 @@ export function getSession() {
         resolve(session)
       })
     })
+  }
+
+  export async function handleUpdateEmailAndNameAttributes(
+    updatedName,
+    updatedphone_number,
+    
+  ) {
+    try {
+      const attributes = await updateUserAttributes({
+        userAttributes: {
+          phone_number: updatedphone_number,
+          name: updatedName,
+        },
+      });
+      
+      console.log(attributes);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 export async function getCurrentUser() {

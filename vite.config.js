@@ -6,6 +6,10 @@ export default defineConfig({
   base: "/React-app/",
   plugins: [react()],
   define: {
-    global: {}}
+    global: {}},
+  optimizeDeps:{
+    include:['aws-amplify'],
+  },
+
 })
 
