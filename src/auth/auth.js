@@ -1,7 +1,10 @@
 
 import { CognitoUserPool,AuthenticationDetails,CognitoUser } from "amazon-cognito-identity-js";
-import { updateUserAttributes } from 'aws-amplify/auth';
+
 import  {poolData} from './Userpool.js';
+// import { Component } from "react";
+// import { CognitoUserAttribute } from "amazon-cognito-identity-js";
+
 
 const Datapool= new CognitoUserPool({
     UserPoolId:poolData.UserPoolId,
@@ -67,26 +70,7 @@ export function getSession() {
       })
     })
   }
-
-  export async function handleUpdateEmailAndNameAttributes(
-    updatedName,
-    updatedphone_number,
-    
-  ) {
-    try {
-      const attributes = await updateUserAttributes({
-        userAttributes: {
-          phone_number: updatedphone_number,
-          name: updatedName,
-        },
-      });
-      
-      console.log(attributes);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
+  
 export async function getCurrentUser() {
     return new Promise((resolve, reject) => {
       const cognitoUser = Datapool.getCurrentUser()
@@ -116,3 +100,68 @@ export async function getCurrentUser() {
       })
     })
   }
+
+
+  // update function
+
+//  class UpdateUserAttributes extends Component{
+//     constructor(props){
+//       super(props);
+//       this.state = {
+//         currentPhoneNumber :"",
+//         newPhoneNumber :""
+//       }
+
+//       this.data ={
+//         UserPoolId:poolData.UserPoolId,
+//         ClientId:poolData.ClientId,
+//       }
+
+//       this.userPool = new CognitoUserPool(this.data)
+//       this.currentUser = this.userPool.getCurrentUser();
+//     }
+
+//     isAuthenticated(){
+//       return this.currentUser != null;
+//     }
+
+//     handleUpdateAttributes = () =>{
+//       const{currentPhoneNumber,newPhoneNumber}=this.state;
+
+//       if(this.isAuthenticated()){
+//         this.currentUser.getSession((err,session) => {
+//           if(err){
+//             console.log("Error getting session:");
+//             return;
+//           }
+//           if(!session.isValid()){
+//             console.log("Session is not valid");
+//             return;
+//           }
+
+//           const attributeList =[];
+
+//           if(currentPhoneNumber != newPhoneNumber){
+//             const phoneAttribute = new CognitoUserAttribute({
+//               Name:"phone_number",
+//               Value:newPhoneNumber
+//             });
+//             attributeList.push(phoneAttribute);
+//           }
+//           if(attributeList.length >0){
+//             this.currentUser.updateAttributes(attributeList, (err,result)=>{
+//               if(err){
+//                 console.log("Error updating attributes",err);
+//               }
+//               else{
+//                 console.log("Attribute added successfully",result)
+//               }
+//             })
+//           }
+//           else{
+//             console.log("no attribute available")
+//           }
+//         })
+//       }
+//     }
+//   }

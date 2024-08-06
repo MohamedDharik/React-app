@@ -7,10 +7,11 @@ import Campaign from './auth/campagian.jsx'
 import Broadcast from './auth/broadcast.jsx'
 import Transaction from './auth/Transaction.jsx'
 import './../node_modules/bootstrap/dist/css/bootstrap.min.css';
-
 import { BrowserRouter , Route, Routes } from 'react-router-dom';
 
-//  Amplify.configure(Awsconfig);
+
+
+
  
 function App() {
   return (

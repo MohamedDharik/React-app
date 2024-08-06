@@ -1,25 +1,90 @@
-import 'bootstrap/dist/css/bootstrap.min.css'; 
+import React, { useState } from 'react';
 import { Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import Sidebar from '../components/sidebar.jsx';
-import { signOut, getCurrentUser, handleUpdateEmailAndNameAttributes} from './auth.js';
-
-// import { updateUserAttributes,  UpdateUserAttributesOutput } from "aws-amplify/auth";
-
-
+import { signOut } from './auth.js';
+import { CognitoUserPool, CognitoUserAttribute } from 'amazon-cognito-identity-js';
+import { poolData } from './Userpool.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Dashboard() {
-  const [showCard, setShowCard] = useState(true);
-  const [attribute, setAttribute] = useState({ name: '', phone_number: '' });
+  const [showCard, setShowCard] = useState(false);
+  const [currentPhoneNumber, setCurrentPhoneNumber] = useState('');
+  const [newPhoneNumber, setNewPhoneNumber] = useState('');
+  const [currentName, setCurrentName] = useState('');
+  const [newName, setNewName] = useState('');
+  const[currentEmail , setCurrentEmail]=useState('')
+  const [newEmail, setNewEmail] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+
+  const data = {
+    UserPoolId: poolData.UserPoolId,
+    ClientId: poolData.ClientId,
+  };
+
+  const userPool = new CognitoUserPool(data);
+  const currentUser = userPool.getCurrentUser();
+
+  const isAuthenticated = () => currentUser !== null;
+
+  const handleUpdateAttributes = () => {
+    if (isAuthenticated()) {
+      currentUser.getSession((err, session) => {
+        if (err) {
+          console.error('Error getting session:', err);
+          return;
+        }
+        if (!session.isValid()) {
+          console.error('Session is not valid');
+          return;
+        }
+
+        const attributeList = [];
+
+        if (currentPhoneNumber !== newPhoneNumber) {
+          const phoneAttribute = new CognitoUserAttribute({
+            Name: 'phone_number',
+            Value: newPhoneNumber,
+          });
+          attributeList.push(phoneAttribute);
+        }
+
+        if (currentName !== newName) {
+          const nameAttribute = new CognitoUserAttribute({
+            Name: 'name',
+            Value: newName,
+          });
+          attributeList.push(nameAttribute);
+        }
+        if(currentEmail !== newEmail){
+          const emailAttribute =new CognitoUserAttribute({
+            Name:'email',
+            Value:newEmail,
+          });
+          attributeList.push(emailAttribute)
+        }
+
+        if (attributeList.length > 0) {
+          currentUser.updateAttributes(attributeList, (err, result) => {
+            if (err) {
+              console.error('Error updating attributes:', err);
+            } else {
+              setMessage('Attributes updated successfully');
+              console.log('Attributes updated successfully:', result);
+            }
+          });
+        } else {
+          console.log('No attributes to update');
+        }
+      });
+    }
+  };
 
   const toggle = (e) => {
     e.preventDefault();
     setShowCard(!showCard);
   };
-
-  const navigate = useNavigate();
 
   const logout = async (e) => {
     e.preventDefault();
@@ -28,30 +93,6 @@ function Dashboard() {
       navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAttribute((prevAttributes) => ({
-      ...prevAttributes,
-      [name]: value,
-    }));
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-  
-    try {
-      const user = getCurrentUser();
-      if (user) {
-        
-        await handleUpdateEmailAndNameAttributes(attribute.name, attribute.phone_number);
-        setMessage('Attributes updated successfully!');
-      }
-    } catch (error) {
-      console.error('Error updating attributes:', error);
-      setMessage('Failed to update attributes.');
     }
   };
 
@@ -82,31 +123,43 @@ function Dashboard() {
               {showCard && (
                 <Card className='Card border-light shadow p-3 mb-5 bg-white rounded d-flex flex-column align-items-center mt-5'>
                   <h5>User Details</h5>
+                  {/* <input 
+                    type="tel" 
+                    value={currentPhoneNumber} 
+                    onChange={(e) => setCurrentPhoneNumber(e.target.value)}
+                    className='mb-3 form-control' 
+                    placeholder='Enter current phone number..' 
+                  /> */}
                   <input 
                     type="text" 
-                    onChange={handleChange} 
-                    name="name" 
-                    value={attribute.name} 
-                    className='form mt-4 mb-3 form-control' 
-                    placeholder='Enter name..' 
+                    value={newName} 
+                    onChange={(e) => setNewName(e.target.value)}
+                    className='mb-3 form-control' 
+                    placeholder='Enter new name..' 
                   />
                   <input 
-                    type="email"  
-                    onChange={handleChange} 
-                    name="email" 
-                    value={attribute.email} 
-                    className='mb-3 form-control ' 
-                    placeholder='Enter email..' 
+                    type="email" 
+                    value={newEmail} 
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    className='mb-3 form-control' 
+                    placeholder='Enter new Email..' 
                   />
                   <input 
                     type="tel" 
-                    onChange={handleChange} 
-                    name="phone_number" 
-                    value={attribute.phone_number} 
+                    value={newPhoneNumber} 
+                    onChange={(e) => setNewPhoneNumber(e.target.value)}
                     className='mb-3 form-control' 
-                    placeholder='Enter phone number..' 
+                    placeholder='Enter new phone number..' 
                   />
-                  <button onClick={onSubmit} className='mt-3 mb-3 w-25 btn btn-outline-primary'>Add</button>
+                  {/* <input 
+                    type="text" 
+                    value={currentName} 
+                    onChange={(e) => setCurrentName(e.target.value)}
+                    className='mb-3 form-control' 
+                    placeholder='Enter current name..' 
+                  /> */}
+                  
+                  <button onClick={handleUpdateAttributes} className='mt-3 mb-3 w-25 btn btn-outline-primary'>Update</button>
                   {message && <p>{message}</p>}
                 </Card>
               )}
