@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import { Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/sidebar.jsx';
@@ -6,6 +6,8 @@ import { signOut } from './auth.js';
 import { CognitoUserPool, CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { poolData } from './Userpool.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {AWS} from 'aws-sdk'
+
 
 function Dashboard() {
   const [showCard, setShowCard] = useState(false);
@@ -18,68 +20,101 @@ function Dashboard() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  const data = {
-    UserPoolId: poolData.UserPoolId,
-    ClientId: poolData.ClientId,
+  // const data = {
+  //   UserPoolId: poolData.UserPoolId,
+  //   ClientId: poolData.ClientId,
+  // };
+
+  // const userPool = new CognitoUserPool(data);
+  // const currentUser = userPool.getCurrentUser();
+
+  // const isAuthenticated = () => currentUser !== null;
+
+  // const handleUpdateAttributes = () => {
+  //   if (isAuthenticated()) {
+  //     currentUser.getSession((err, session) => {
+  //       if (err) {
+  //         console.error('Error getting session:', err);
+  //         return;
+  //       }
+  //       if (!session.isValid()) {
+  //         console.error('Session is not valid');
+  //         return;
+  //       }
+
+  //       const attributeList = [];
+
+  //       if (currentPhoneNumber !== newPhoneNumber) {
+  //         const phoneAttribute = new CognitoUserAttribute({
+  //           Name: 'phone_number',
+  //           Value: newPhoneNumber,
+  //         });
+  //         attributeList.push(phoneAttribute);
+  //       }
+
+  //       if (currentName !== newName) {
+  //         const nameAttribute = new CognitoUserAttribute({
+  //           Name: 'name',
+  //           Value: newName,
+  //         });
+  //         attributeList.push(nameAttribute);
+  //       }
+  //       if(currentEmail !== newEmail){
+  //         const emailAttribute =new CognitoUserAttribute({
+  //           Name:'email',
+  //           Value:newEmail,
+  //         });
+  //         attributeList.push(emailAttribute)
+  //       }
+
+  //       if (attributeList.length > 0) {
+  //         currentUser.updateAttributes(attributeList, (err, result) => {
+  //           if (err) {
+  //             console.error('Error updating attributes:', err);
+  //           } else {
+  //             setMessage('Attributes updated successfully');
+  //             console.log('Attributes updated successfully:', result);
+  //           }
+  //         });
+  //       } else {
+  //         console.log('No attributes to update');
+  //       }
+  //     });
+  //   }
+  // };
+
+
+ const cognito = new AWS.CognitoIdentityServiceProvider();
+ const add = ()=>{
+  const params = {
+    UserPoolId: 'us-east-1_3eVqiFQmC', 
+    Username: newName, 
+    UserAttributes: [
+      {
+        Name: 'email',
+        Value: newEmail,
+      },
+      {
+        Name: 'phone_number',
+        Value: newPhoneNumber,
+      }
+    ],
+    TemporaryPassword: 'Admin@1234',
+    MessageAction: 'SUPPRESS'
   };
-
-  const userPool = new CognitoUserPool(data);
-  const currentUser = userPool.getCurrentUser();
-
-  const isAuthenticated = () => currentUser !== null;
-
-  const handleUpdateAttributes = () => {
-    if (isAuthenticated()) {
-      currentUser.getSession((err, session) => {
-        if (err) {
-          console.error('Error getting session:', err);
-          return;
-        }
-        if (!session.isValid()) {
-          console.error('Session is not valid');
-          return;
-        }
-
-        const attributeList = [];
-
-        if (currentPhoneNumber !== newPhoneNumber) {
-          const phoneAttribute = new CognitoUserAttribute({
-            Name: 'phone_number',
-            Value: newPhoneNumber,
-          });
-          attributeList.push(phoneAttribute);
-        }
-
-        if (currentName !== newName) {
-          const nameAttribute = new CognitoUserAttribute({
-            Name: 'name',
-            Value: newName,
-          });
-          attributeList.push(nameAttribute);
-        }
-        if(currentEmail !== newEmail){
-          const emailAttribute =new CognitoUserAttribute({
-            Name:'email',
-            Value:newEmail,
-          });
-          attributeList.push(emailAttribute)
-        }
-
-        if (attributeList.length > 0) {
-          currentUser.updateAttributes(attributeList, (err, result) => {
-            if (err) {
-              console.error('Error updating attributes:', err);
-            } else {
-              setMessage('Attributes updated successfully');
-              console.log('Attributes updated successfully:', result);
-            }
-          });
-        } else {
-          console.log('No attributes to update');
-        }
-      });
+  
+  cognito.adminCreateUser(params, (err, data) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log('User created:', data);
     }
-  };
+  });
+}
+  
+  
+
+
 
   const toggle = (e) => {
     e.preventDefault();
@@ -159,7 +194,7 @@ function Dashboard() {
                     placeholder='Enter current name..' 
                   /> */}
                   
-                  <button onClick={handleUpdateAttributes} className='mt-3 mb-3 w-25 btn btn-outline-primary'>Update</button>
+                  <button onClick={add} className='mt-3 mb-3 w-25 btn btn-outline-primary'>Add</button>
                   {message && <p>{message}</p>}
                 </Card>
               )}
