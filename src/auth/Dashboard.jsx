@@ -30,6 +30,32 @@ function Dashboard() {
     }
   });
 
+
+
+  async function fetchUsers() {
+    const params = {
+      UserPoolId: 'us-east-1_3eVqiFQmC',
+    };
+
+    try {
+      const command = new ListUsersCommand(params);
+      const data = await client.send(command);
+      return data.Users;
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      return [];
+    }
+  }
+  async function loadUsers() {
+    const user = await fetchUsers();
+    setUsers(user);}
+
+  useEffect(() => {
+    loadUsers();
+  },[]);
+    
+   
+
   const add = async () => {
     setShowstatus(!showstatus);
 
@@ -54,35 +80,14 @@ function Dashboard() {
     try {
       const data = await client.send(command);
       setMessage("User Created Successfully");
+      await loadUsers();
       console.log('User created:', data);
     } catch (err) {
       setMessage("Failed to Create User, Invalid Parameters");
       console.error('Error creating user:', err);
     }
   };
-
-  async function fetchUsers() {
-    const params = {
-      UserPoolId: 'us-east-1_3eVqiFQmC',
-    };
-
-    try {
-      const command = new ListUsersCommand(params);
-      const data = await client.send(command);
-      return data.Users;
-    } catch (err) {
-      console.error('Error fetching users:', err);
-      return [];
-    }
-  }
-
-  useEffect(() => {
-    async function loadUsers() {
-      const user = await fetchUsers();
-      setUsers(user);
-    }
-    loadUsers();
-  }, []);
+  
 
   const toggle = (e) => {
     e.preventDefault();
