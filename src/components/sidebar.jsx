@@ -1,61 +1,66 @@
-import { Link } from "react-router-dom";
+ 
+import { Button } from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
 
 
+  
 export default function sideBar(){
-    
+
+    const location = useLocation();
+     
 
     return(
-       
+  
          <div className="sidebar d-flex flex-column bg-light  text-light p-4 vh-100">
            <a href="d-flex text-light align-items-center mb-1" style={{ textDecoration: 'none' }}>
            <i className="fa-solid fa-user-tie text-primary fs-5 me-3"></i>
-            <span className="fs-4 index text-primary" style={{ textDecoration: 'none' }} >Welcome</span>
+            <span className="fs-4 index text-primary" style={{ textDecoration: 'none' }} >Welcome Back</span>
             </a>     
               
             <hr className="text-secondary mb-1"/>
-              <ul className="nav nav-pills  flex-column">
-               <li className="nav-item">
-                   <Link to ='/dashboard' className="nav-link"><button className="py-1 btn border border-light"><span ><i className="fa-solid fa-table-columns me-2 "></i>Dashboard</span></button></Link>
-               </li>
 
-               <li className="nav-item">
-                   <Link to ='/analytics' className="nav-link"><button className="py-1 btn border border-light"><span ><i className="fa-solid fa-chart-simple me-2"></i>Analytics</span></button></Link>
-               </li>
+            <div className="d-flex flex-column " style={{ height: '100vh' }}>
+                <ul className="nav nav-pills flex-column">
+                    <li className="nav-item">
+                    <Link to='/dashboard' className={`py-2 px-4 btn text-primary btn-outline-light ${location.pathname === '/dashboard'? 'active' : ''}`} >
+       
+                   <span><i className="fa-solid fa-table-columns me-2"></i>Dashboard</span>
+      
+                   </Link>
+   </li>
+    {/* <li className="nav-item">
+      <Link to='/analytics' className={`py-2 px-4 btn text-primary btn-outline-light ${location.pathname === '/analytics' ? 'active' : ''}`}>
+    
+          <span><i className="fa-solid fa-chart-simple me-2"></i>Analytics</span>
+        
+      </Link>
+    </li>  */}
+    <div className="mb-5"></div>
+    <div className="mb-5"></div>
+    <div className="mb-5"></div>
+    <div className="mb-5"></div>
+    <div className="mb-5"></div>
+    <div className="mb-5"></div>
+    <div className="mb-5"></div>
+    <div className="mb-5"></div>
+    <div className="mb-5"></div>
+    <div className="mb-3"></div>
+  
+    <li className=" nav-item mt-auto "> 
+    <Link to='/'  className={`py-2 px-4 btn  btn-outline-primary  ${location.pathname === '/' ? 'active' : ''}`}>
+        
+        <span><i className="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</span>
+      
+    </Link>
 
-               <hr className="text-secondary mb-1"/>
+    </li>
+  </ul>
+ 
+   
+ 
+  
+</div>
+</div>
 
-               <li className="nav-item">
-                   <Link to = '/campaign' className="nav-link"><button className="py-1 btn border border-light"> <span ><i className="fa-solid fa-bullhorn me-2"></i>Campaigns</span></button></Link>
-               </li>
-               <li className="nav-item">
-                   <Link to ='/broadcast' className="nav-link"><button className="py-1 btn border border-light"><span ><i className="fa-solid fa-tower-broadcast me-2"></i>Broadcasts</span></button></Link>
-               </li>
-
-               <li className="nav-item">
-                   <Link to ='/transaction' className="nav-link"><button className="py-1 btn border border-light"> <span ><i className="fa-solid fa-chart-line me-2"></i>Transactional</span></button></Link>
-               </li>
-
-               <hr className="text-secondary mb-1"/>
-
-               <li className="nav-item">
-                   <a href="#" className="nav-link"><button className="py-1 btn border border-light"><span ><i className="fa-solid fa-people-group me-2"></i>People</span></button></a>
-               </li>
-               <li className="nav-item">
-                   <a href="#" className="nav-link"><button className="py-1 btn border border-light"><span ><i className="fa-regular fa-id-badge me-2"></i>Segments</span></button></a>
-               </li>
-               <li className="nav-item">
-                   <a href="#" className="nav-link"><button className="py-1 btn border border-light"> <span ><i className="fa-solid fa-chart-gantt me-2"></i>Activity Logs</span></button></a>
-               </li>
-               <li className="nav-item ">
-                   <a href="#" className="nav-link"><button className="py-1 btn border border-light">  <span ><i className="fa-solid fa-box-archive me-2"></i>Content</span></button></a>
-               </li>
-               <hr className="text-secondary mt-1 mb-0"/>
-              
-               <li className="nav-item">
-                   <a href="#" className="nav-link"><button className="py-1 btn border border-light">  <span ><i className="fa-solid fa-gear me-2"></i>Settings</span></button></a>
-               </li>
-              </ul>
-                </div>
-          
     );
 }

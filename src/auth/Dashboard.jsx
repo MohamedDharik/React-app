@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Card, Toast, FormControl, Button } from 'react-bootstrap';
+import { Row, Col, Card, Toast, FormControl, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/sidebar.jsx';
-import { signOut } from './auth.js';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { CognitoIdentityProviderClient, AdminCreateUserCommand, ListUsersCommand, AdminUpdateUserAttributesCommand } from "@aws-sdk/client-cognito-identity-provider";
+import Swal from 'sweetalert2';
 
 function Dashboard() {
   const [showCard, setShowCard] = useState(false);
@@ -18,9 +19,7 @@ function Dashboard() {
   const [editableData, setEditableData] = useState({});
   const navigate = useNavigate(false);
 
-  const closestatus = () => {
-    setShowstatus(!showstatus);
-  };
+
 
   const client = new CognitoIdentityProviderClient({
     region: 'us-east-1',
@@ -54,7 +53,8 @@ function Dashboard() {
     loadUsers();
   },[]);
     
-   
+  const handleClose = () => setShowCard(false);
+  const handleShow = () => setShowCard(true);
 
   const add = async () => {
     setShowstatus(!showstatus);
@@ -79,30 +79,27 @@ function Dashboard() {
 
     try {
       const data = await client.send(command);
-      setMessage("User Created Successfully");
+      Swal.fire({
+        title: "User Details",
+        text: "User added successfully",
+        icon: "success"
+      });
+      setShowCard(false)
       await loadUsers();
       console.log('User created:', data);
     } catch (err) {
-      setMessage("Failed to Create User, Invalid Parameters");
+      Swal.fire({
+        title: "User Details",
+        text: `Invalid Data `,
+        icon: "error"
+      });
       console.error('Error creating user:', err);
     }
   };
   
 
-  const toggle = (e) => {
-    e.preventDefault();
-    setShowCard(!showCard);
-  };
 
-  const logout = async (e) => {
-    e.preventDefault();
-    try {
-      await signOut();
-      navigate('/login');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+
 
   const handleEditToggle = (user) => {
     if (editingUser === user.Username) {
@@ -145,7 +142,11 @@ function Dashboard() {
       await client.send(command);
 
       console.log(`Successfully updated data for ${username}`);
-      setMessage("User data updated successfully!")
+      Swal.fire({
+        title: "User Update",
+        text: "User data updated successfully",
+        icon: "success"
+      });
       const updatedUsers = await fetchUsers();
       setUsers(updatedUsers);
       setEditingUser(null);
@@ -161,55 +162,63 @@ function Dashboard() {
           <Sidebar />
         </Col>
         <Col className='col-10 card rounded-2 border vh-100 mt-2'>
-          <span className='ms-auto me-auto'>
-            <Toast show={showstatus} onClose={closestatus} className="flex-end d-flex">
-              <Toast.Header>{message}</Toast.Header>
-            </Toast>
-          </span>
           <span className='d-flex flex-row'>
             <input className='form-control mt-2 ms-2 w-25' type='text' placeholder='Search...' />
-            <button type='button' className='ms-1 mt-2 btn btn-outline-primary py-0 px-3'>Search</button>
-            <button type='button' onClick={logout} className='ms-5 mt-2 flex-row d-flex justify-content-center btn btn-outline-primary px-3'>Logout</button>
+            <Button type='button' className='ms-1 mt-2 btn  py-0 px-3'>Search</Button>
+        
           </span>
           <hr />
           <h3 className='mt-0 mb-2 ms-3 text-primary'>Dashboard</h3>
           <Row>
             <Col>
-              <Button onClick={toggle} className='ms-3 mt-3 btn '>
-                {showCard ? 'Hide' : 'Add User'}
-              </Button>
+            <Button variant="primary" onClick={handleShow}>
+        Add Users
+      </Button>
+
             </Col>
           </Row>
           <Row>
             <Col></Col>
             <Col>
-              {showCard && (
-                <Card className='border-light shadow p-3 mb-5 bg-white rounded d-flex flex-column align-items-center mt-5'>
-                  <h5>User Details</h5>
-                  <input 
-                    type="text" 
-                    value={newName} 
-                    onChange={(e) => setNewName(e.target.value)}
-                    className='mb-3 form-control' 
-                    placeholder='Enter new name..' 
-                  />
-                  <input 
-                    type="email" 
-                    value={newEmail} 
-                    onChange={(e) => setNewEmail(e.target.value)}
-                    className='mb-3 form-control' 
-                    placeholder='Enter new Email..' 
-                  />
-                  <input 
-                    type="tel" 
-                    value={newPhoneNumber} 
-                    onChange={(e) => setNewPhoneNumber(e.target.value)}
-                    className='mb-3 form-control' 
-                    placeholder='Enter new phone number..' 
-                  />
-                  <Button onClick={add} className='mt-3 mb-3 px-4 py-1 btn'>Add</Button>
-                </Card>
-              )}
+       
+            <Modal show={showCard} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>User Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <input 
+            type="text" 
+            value={newName} 
+            onChange={(e) => setNewName(e.target.value)}
+            className='mb-3 form-control' 
+            placeholder='Enter new name..' 
+          />
+          <input 
+            type="email" 
+            value={newEmail} 
+            onChange={(e) => setNewEmail(e.target.value)}
+            className='mb-3 form-control' 
+            placeholder='Enter new Email..' 
+          />
+          <input 
+            type="tel" 
+            value={newPhoneNumber} 
+            onChange={(e) => setNewPhoneNumber(e.target.value)}
+            className='mb-3 form-control' 
+            placeholder='Enter new phone number(+91)..' 
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={add}>
+            Add
+          </Button>
+        </Modal.Footer>
+      </Modal>
+   
+            
             </Col>
             <Col></Col>
           </Row>
@@ -248,16 +257,7 @@ function Dashboard() {
                             )}
                           </td>
                           <td>
-                            {editingUser === user.Username ? (
-                              <FormControl
-                                type="email"
-                                name="email"
-                                value={editableData.email}
-                                onChange={handleInputChange}
-                              />
-                            ) : (
-                              emailatt ? emailatt.Value : "No value available"
-                            )}
+                           {emailatt ? emailatt.Value :"No value available"}
                           </td>
                           <td>
                             {editingUser === user.Username ? (
