@@ -1,12 +1,13 @@
  
+import { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 
 
   
 export default function sideBar(){
-
-    const location = useLocation();
+        const location = useLocation();
+      location.pathname='/dashboard'
      
 
     return(
@@ -47,7 +48,7 @@ export default function sideBar(){
     <div className="mb-3"></div>
   
     <li className=" nav-item mt-auto "> 
-    <Link to='/'  className={`py-2 px-4 btn  btn-outline-primary  ${location.pathname === '/' ? 'active' : ''}`}>
+    <Link to='/'  className={`py-2 px-4 btn  btn-outline-primary  `} >
         
         <span><i className="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</span>
       
