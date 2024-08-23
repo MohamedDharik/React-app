@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Card, Toast, FormControl, Button, Modal } from 'react-bootstrap';
+import { Row, Col, Card, Toast, FormControl, Button, Modal,Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/sidebar.jsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { CognitoIdentityProviderClient, AdminCreateUserCommand, ListUsersCommand, AdminUpdateUserAttributesCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { CognitoIdentityProviderClient, AdminCreateUserCommand, ListUsersCommand, AdminUpdateUserAttributesCommand,AdminAddUserToGroupCommand } from "@aws-sdk/client-cognito-identity-provider";
 import Swal from 'sweetalert2';
 
 function Dashboard() {
@@ -13,7 +13,7 @@ function Dashboard() {
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [showstatus, setShowstatus] = useState(false);
-  const [message, setMessage] = useState("");
+  const [newRole , setNewRole] =useState('');
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [editableData, setEditableData] = useState({});
@@ -57,7 +57,7 @@ function Dashboard() {
   const handleShow = () => setShowCard(true);
 
   const add = async () => {
-    setShowstatus(!showstatus);
+    
 
     const params = {
       UserPoolId: 'us-east-1_3eVqiFQmC',
@@ -66,17 +66,16 @@ function Dashboard() {
         { Name: 'name', Value: newName },
         { Name: 'email', Value: newEmail },
         { Name: 'phone_number', Value: newPhoneNumber },
+        { Name: 'custom:Role', Value: newRole}
       ],
-      TemporaryPassword: 'Admin#1234',
+      TemporaryPassword: 'Admin*@1234',
       MessageAction: 'SUPPRESS',
     };
 
-    setNewEmail("");
-    setNewName("");
-    setNewPhoneNumber("");
+   
 
     const command = new AdminCreateUserCommand(params);
-
+    
     try {
       const data = await client.send(command);
       Swal.fire({
@@ -84,17 +83,58 @@ function Dashboard() {
         text: "User added successfully",
         icon: "success"
       });
+      setNewEmail("");
+      setNewName("");
+      setNewPhoneNumber("");
+      setNewRole("");
       setShowCard(false)
       await loadUsers();
       console.log('User created:', data);
     } catch (err) {
       Swal.fire({
         title: "User Details",
-        text: `Invalid Data `,
+        text: err.message,
         icon: "error"
       });
+      await loadUsers();
       console.error('Error creating user:', err);
     }
+    try{
+    const groupParams = {
+      UserPoolId: 'us-east-1_3eVqiFQmC',
+      Username: newEmail,
+      GroupName: newRole, 
+    };
+
+    switch (newRole) {
+      case 'Admin':
+        groupParams.GroupName = 'Admins';
+        break;
+      case 'User':
+        groupParams.GroupName = 'Users';
+        break;
+      case 'SuperAdmin':
+        groupParams.GroupName = 'SuperAdmin';
+      default:
+        Swal.fire({
+          title: "User Details",
+          text: ('Unknown role:', newRole),
+          icon: "error"
+        });
+        console.error(newRole)
+        return;
+    }
+    const addUserToGroupCommand = new AdminAddUserToGroupCommand(groupParams);
+    await client.send(addUserToGroupCommand)
+    Swal.fire({
+      title: "User Details",
+      text: (`User added to the ${groupParams.GroupName} group successfully.`),
+      icon: "success"
+    });
+    console.log;
+  } catch (error) {
+    console.error("Error adding user:", error);
+  }
   };
   
 
@@ -207,6 +247,13 @@ function Dashboard() {
             className='mb-3 form-control' 
             placeholder='Enter new phone number(+91)..' 
           />
+          <input
+          type="text" 
+          value={newRole} 
+          onChange={(e) => setNewRole(e.target.value)}
+          className='mb-3 form-control' 
+          placeholder='Enter your Role(User or Admin)..' 
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -217,8 +264,6 @@ function Dashboard() {
           </Button>
         </Modal.Footer>
       </Modal>
-   
-            
             </Col>
             <Col></Col>
           </Row>
@@ -233,6 +278,7 @@ function Dashboard() {
                       <th>Name</th>
                       <th>Email</th>
                       <th>Phone Number</th>
+                      <th>Roles</th>
                       <th>Edit</th>
                     </tr>
                   </thead>
@@ -241,7 +287,7 @@ function Dashboard() {
                       const nameatt = user.Attributes?.find(attr => attr.Name === 'name');
                       const emailatt = user.Attributes?.find(attr => attr.Name === 'email');
                       const phoneatt = user.Attributes?.find(attr => attr.Name === 'phone_number');
-
+                      const roleatt = user.Attributes?.find(attr => attr.Name === 'custom:Role')
                       return (
                         <tr key={user.Username}>
                           <td>
@@ -270,6 +316,9 @@ function Dashboard() {
                             ) : (
                               phoneatt ? phoneatt.Value : "No value available"
                             )}
+                          </td>
+                          <td>
+                           {roleatt ? roleatt.Value :"No value available"}
                           </td>
                           <td>
                             {editingUser === user.Username ? (
