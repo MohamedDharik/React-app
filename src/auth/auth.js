@@ -52,7 +52,23 @@ export function signIn(email,password){
       })
 }
 
-export function signOut(){}
+// export function forgetPassword(username){
+//   return new Promise((resolve, reject) => {
+//     const cognitoUser = new CognitoUser({
+//       Username: username,
+//       Pool: Datapool,
+//     })
+
+//     cognitoUser.forgotPassword({
+//       onSuccess: () => {
+//         resolve()
+//       },
+//       onFailure: (err) => {
+//         reject(err)
+//       },
+//     })
+//   })
+// }
 
 export function getSession() {
     const cognitoUser = Datapool.getCurrentUser()

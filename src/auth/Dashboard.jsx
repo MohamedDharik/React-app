@@ -247,13 +247,33 @@ function Dashboard() {
             className='mb-3 form-control' 
             placeholder='Enter new phone number(+91)..' 
           />
-          <input
-          type="text" 
-          value={newRole} 
-          onChange={(e) => setNewRole(e.target.value)}
-          className='mb-3 form-control' 
-          placeholder='Enter your Role(User or Admin)..' 
+          <div className="form-check">
+          <input 
+            className="form-check-input mx-1 my-1" 
+            value="Admin" 
+            onChange={(e) => setNewRole(e.target.value)} 
+            type="checkbox" 
+            id="checkboxAdmin"
           />
+          <label className="form-check-label" htmlFor="checkboxAdmin">
+            Admin
+          </label>
+          </div>
+          <div className="form-check">
+          <input 
+            className="form-check-input mx-1 my-1" 
+            value="User" 
+            onChange={(e) => setNewRole(e.target.value)} 
+            type="checkbox" 
+            id="checkboxAdmin"
+          />
+          <label className="form-check-label" htmlFor="checkboxAdmin">
+            User
+          </label>
+           </div>
+
+
+          
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
